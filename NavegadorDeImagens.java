@@ -1,9 +1,9 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import javax.swing.*;
 
 public class NavegadorDeImagens extends JFrame {
 
@@ -18,14 +18,15 @@ public class NavegadorDeImagens extends JFrame {
         setSize(1000, 600);
         setLocationRelativeTo(null);
 
-        // Botão para escolher pasta
+        // botao pra escolhe sua pasta que voce quer a pasta
+
         JButton selecionarPastaBtn = new JButton("Selecionar Pasta");
         selecionarPastaBtn.addActionListener(e -> selecionarPasta());
 
         imagemExibida = new JLabel("", SwingConstants.CENTER);
         imagemExibida.setPreferredSize(new Dimension(600, 600));
 
-        galeriaPanel = new JPanel(new GridLayout(0, 4, 10, 10)); // 4 colunas
+        galeriaPanel = new JPanel(new GridLayout(0, 4, 10, 10)); // 4 coluna de imagem pra escolhe
         scrollPane = new JScrollPane(galeriaPanel);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, imagemExibida);
@@ -48,7 +49,7 @@ public class NavegadorDeImagens extends JFrame {
     }
 
     private void carregarImagensDaPasta(File pasta) {
-        galeriaPanel.removeAll(); // Limpa a galeria anterior
+        galeriaPanel.removeAll(); // limpa se voce nao quiser mais ve a imagem
 
         File[] arquivos = pasta.listFiles((dir, nome) -> {
             String nomeLower = nome.toLowerCase();
