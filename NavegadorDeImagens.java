@@ -9,25 +9,20 @@ public class NavegadorDeImagens extends JFrame {
 
     private JPanel galeriaPanel;
     private JLabel imagemExibida;
-    private JScrollPane scrollPane;
 
     public NavegadorDeImagens() {
         super("Navegador de Imagens");
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(800, 600);
         setLocationRelativeTo(null);
-
-        // botao pra escolhe sua pasta que voce quer a pasta
 
         JButton selecionarPastaBtn = new JButton("Selecionar Pasta");
         selecionarPastaBtn.addActionListener(e -> selecionarPasta());
 
         imagemExibida = new JLabel("", SwingConstants.CENTER);
-        imagemExibida.setPreferredSize(new Dimension(600, 600));
 
-        galeriaPanel = new JPanel(new GridLayout(0, 4, 10, 10)); // 4 coluna de imagem pra escolhe
-        scrollPane = new JScrollPane(galeriaPanel);
+        galeriaPanel = new JPanel(new GridLayout(0, 4, 10, 10));
+        JScrollPane scrollPane = new JScrollPane(galeriaPanel);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, imagemExibida);
         splitPane.setDividerLocation(300);
@@ -40,40 +35,32 @@ public class NavegadorDeImagens extends JFrame {
     private void selecionarPasta() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int resultado = fileChooser.showOpenDialog(this);
-
-        if (resultado == JFileChooser.APPROVE_OPTION) {
-            File pastaSelecionada = fileChooser.getSelectedFile();
-            carregarImagensDaPasta(pastaSelecionada);
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            carregarImagens(fileChooser.getSelectedFile());
         }
     }
 
-    private void carregarImagensDaPasta(File pasta) {
-        galeriaPanel.removeAll(); // limpa se voce nao quiser mais ve a imagem
+    private void carregarImagens(File pasta) {
+        galeriaPanel.removeAll();
 
-        File[] arquivos = pasta.listFiles((dir, nome) -> {
-            String nomeLower = nome.toLowerCase();
-            return nomeLower.endsWith(".jpg") || nomeLower.endsWith(".png") || nomeLower.endsWith(".gif");
-        });
+        File[] arquivos = pasta.listFiles(f -> f.getName().toLowerCase().matches(".*\\.(jpg|png|gif)$"));
 
         if (arquivos != null) {
-            for (File imgFile : arquivos) {
+            for (File arquivo : arquivos) {
                 try {
-                    BufferedImage imagem = ImageIO.read(imgFile);
-                    if (imagem != null) {
-                        Image thumbnail = imagem.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-                        JLabel thumbLabel = new JLabel(new ImageIcon(thumbnail));
-                        thumbLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-                        thumbLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        thumbLabel.addMouseListener(new MouseAdapter() {
-                            public void mouseClicked(MouseEvent e) {
-                                imagemExibida.setIcon(new ImageIcon(imagem.getScaledInstance(600, 600, Image.SCALE_SMOOTH)));
-                            }
-                        });
-                        galeriaPanel.add(thumbLabel);
-                    }
+                    BufferedImage img = ImageIO.read(arquivo);
+                    Image thumbnail = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                    JLabel thumbLabel = new JLabel(new ImageIcon(thumbnail));
+                    thumbLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+                    thumbLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    thumbLabel.addMouseListener(new MouseAdapter() {
+                        public void mouseClicked(MouseEvent e) {
+                            imagemExibida.setIcon(new ImageIcon(img.getScaledInstance(600, 600, Image.SCALE_SMOOTH)));
+                        }
+                    });
+                    galeriaPanel.add(thumbLabel);
                 } catch (Exception ex) {
-                    System.err.println("Erro ao carregar imagem: " + imgFile.getName());
+                    System.err.println("Erro ao carregar imagem: " + arquivo.getName());
                 }
             }
         }
