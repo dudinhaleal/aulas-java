@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class VerificadorIdade {
+public class MaiordeIdade {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Digite sua idade: ");
